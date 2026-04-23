@@ -16,6 +16,10 @@ import {
   CloudPage,
   DownloadPreview,
 } from "./Pages";
+import {
+  PageRenderProvider,
+  PageRenderVariant,
+} from "./PageRenderContext";
 import { BookingForm } from "@/modules/booking/components/BookingForm";
 
 const pageMap: Record<string, React.FC> = {
@@ -95,22 +99,44 @@ export function getPageTitle(id: string): string {
   return id;
 }
 
-export function PageRouter({ pageId }: { pageId: string }) {
+export function PageRouter({
+  pageId,
+  variant = "window",
+}: {
+  pageId: string;
+  variant?: PageRenderVariant;
+}) {
   const Comp = pageMap[pageId];
-  if (Comp) return <Comp />;
+  if (Comp) {
+    return (
+      <PageRenderProvider variant={variant}>
+        <Comp />
+      </PageRenderProvider>
+    );
+  }
 
   const dl = downloadInfo[pageId];
-  if (dl) return <DownloadPreview title={dl.title} desc={dl.desc} />;
+  if (dl) {
+    return (
+      <PageRenderProvider variant={variant}>
+        <DownloadPreview title={dl.title} desc={dl.desc} />
+      </PageRenderProvider>
+    );
+  }
 
   return (
-    <div className="p-6">
+    <div className={variant === "web" ? "mx-auto max-w-5xl px-6 py-10" : "p-6"}>
       <h2
-        className="text-sm font-bold text-[#7f2e77] mb-2"
+        className={
+          variant === "web"
+            ? "mb-4 text-3xl font-bold text-slate-950"
+            : "text-sm font-bold text-[#7f2e77] mb-2"
+        }
         style={{ fontFamily: "Georgia, serif" }}
       >
         {pageId}
       </h2>
-      <p className="text-[11px] text-[#333]">
+      <p className={variant === "web" ? "text-base text-slate-700" : "text-[11px] text-[#333]"}>
         Coming soon. Contact us at (08) 8232 4500.
       </p>
     </div>

@@ -1,18 +1,32 @@
 "use client";
 import { Tile } from "@/lib/types";
 import { TileIcon } from "@/modules/ui/Icons";
+import {
+  getRoutePathForFolderId,
+  getRoutePathForPageId,
+} from "@/modules/content/data/routes";
+import { pushXpPath } from "@/modules/content/utils/xpRouting";
 import { useWindowStore } from "@/modules/windows/store/useWindowStore";
 
 interface TileGridProps {
   tiles: Tile[];
+  folderId: string;
   folderTitle: string;
 }
 
-export function TileGrid({ tiles, folderTitle }: TileGridProps) {
+export function TileGrid({ tiles, folderId, folderTitle }: TileGridProps) {
   const openFolder = useWindowStore((s) => s.openFolder);
   const openPreview = useWindowStore((s) => s.openPreview);
 
   const handleClick = (tile: Tile) => {
+    const routePath = tile.openFolder
+      ? getRoutePathForFolderId(tile.openFolder)
+      : getRoutePathForPageId(tile.id);
+
+    if (routePath && window.location.pathname !== routePath) {
+      pushXpPath(routePath, { folderId, tileId: tile.id });
+    }
+
     if (tile.openFolder) {
       openFolder(tile.openFolder);
     } else {

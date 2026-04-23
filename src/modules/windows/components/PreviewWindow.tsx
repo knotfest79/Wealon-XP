@@ -7,10 +7,16 @@ import {
   PageRouter,
   getPageTitle,
 } from "@/modules/content/components/PageRouter";
+import {
+  getFolderIdForPageId,
+  getRoutePathForFolderId,
+} from "@/modules/content/data/routes";
+import { pushXpPath } from "@/modules/content/utils/xpRouting";
 import clsx from "clsx";
 
 export function PreviewWindow() {
-  const { activePreview, closePreview, togglePreviewMax } = useWindowStore();
+  const { activePreview, closePreview, openFolders, togglePreviewMax } =
+    useWindowStore();
   const bp = useBreakpoint();
   const isMobile = bp === "mobile";
   const isSmall = bp !== "desktop";
@@ -18,6 +24,20 @@ export function PreviewWindow() {
   // On tablet/mobile, always show maximized (white) mode
   const isMax = activePreview ? isSmall || activePreview.maximized : false;
   const barH = isMobile ? 44 : 36;
+
+  const handleClose = () => {
+    if (activePreview) {
+      const folderId = getFolderIdForPageId(activePreview.id);
+      const nextPath =
+        folderId && openFolders[folderId]
+          ? getRoutePathForFolderId(folderId) || "/"
+          : "/";
+
+      pushXpPath(nextPath, folderId ? { folderId } : {});
+    }
+
+    closePreview();
+  };
 
   return (
     <AnimatePresence>
@@ -70,7 +90,7 @@ export function PreviewWindow() {
             variant={isMax ? "folder" : "dark"}
             isMaximized={isMax}
             onMaximize={!isMobile ? togglePreviewMax : undefined}
-            onClose={closePreview}
+            onClose={handleClose}
           />
 
           <div

@@ -1,4 +1,5 @@
 'use client';
+import { useEffect, useRef } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { BootScreen } from '@/modules/desktop/components/BootScreen';
 import { Wallpaper } from '@/modules/desktop/components/Wallpaper';
@@ -12,10 +13,13 @@ import { StartMenu } from '@/modules/taskbar/components/StartMenu';
 import { useWindowStore } from '@/modules/windows/store/useWindowStore';
 import { useDesktopStore } from '@/modules/desktop/hooks/useDesktopStore';
 import { folders } from '@/modules/content/data/folders';
+import { getFolderIdForPageId, getSeoRoute, seoRoutes } from '@/modules/content/data/routes';
+import { setCanonicalForPath, setXpModeCookie } from '@/modules/content/utils/xpRouting';
 
 export default function HomePage() {
-  const { openFolders, activePreview } = useWindowStore();
+  const { openFolders, activePreview, openFolder, openPreview } = useWindowStore();
   const { bootPhase } = useDesktopStore();
+  const hydratedPath = useRef<string | null>(null);
 
   // Determine which folder is frontmost
   const folderKeys = Object.keys(openFolders);
@@ -23,8 +27,34 @@ export default function HomePage() {
     ? Math.max(...folderKeys.map((k) => openFolders[k].zIndex))
     : 0;
 
+  useEffect(() => {
+    setXpModeCookie();
+    setCanonicalForPath(window.location.pathname);
+  }, []);
+
+  useEffect(() => {
+    if (hydratedPath.current === window.location.pathname) return;
+
+    const route = getSeoRoute(window.location.pathname);
+    if (!route) return;
+
+    hydratedPath.current = window.location.pathname;
+
+    const folderId = getFolderIdForPageId(route.pageId);
+    if (folderId) openFolder(folderId);
+    if (route.pageId !== 'services-index') openPreview(route.pageId);
+  }, [openFolder, openPreview]);
+
   return (
-    <>
+    <main className="xp-desktop-shell">
+      <nav aria-label="Site pages" className="sr-only">
+        {seoRoutes.map((route) => (
+          <a key={route.path} href={route.path}>
+            {route.title}
+          </a>
+        ))}
+      </nav>
+
       <BootScreen />
 
       {bootPhase === 'ready' && (
@@ -64,6 +94,6 @@ export default function HomePage() {
           <Taskbar />
         </div>
       )}
-    </>
+    </main>
   );
 }

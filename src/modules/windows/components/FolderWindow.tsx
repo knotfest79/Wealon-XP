@@ -7,6 +7,11 @@ import { Titlebar } from "./Titlebar";
 import { Sidebar } from "./Sidebar";
 import { TileGrid } from "./TileGrid";
 import { Folder } from "@/lib/types";
+import {
+  getFolderIdForPageId,
+  getRoutePathForFolderId,
+} from "@/modules/content/data/routes";
+import { pushXpPath } from "@/modules/content/utils/xpRouting";
 
 interface FolderWindowProps {
   folder: Folder;
@@ -15,7 +20,8 @@ interface FolderWindowProps {
 }
 
 export function FolderWindow({ folder, zIndex, isActive }: FolderWindowProps) {
-  const { closeFolder, minimizeFolder, bringToFront } = useWindowStore();
+  const { activePreview, closeFolder, minimizeFolder, bringToFront } =
+    useWindowStore();
   const [isMaximized, setIsMaximized] = useState(false);
   const bp = useBreakpoint();
   const isMobile = bp === "mobile";
@@ -50,6 +56,23 @@ export function FolderWindow({ folder, zIndex, isActive }: FolderWindowProps) {
   );
 
   const handleMouseUp = useCallback(() => setDragStart(null), []);
+
+  const handleClose = () => {
+    const folderPath = getRoutePathForFolderId(folder.id);
+    const previewFolderId = activePreview
+      ? getFolderIdForPageId(activePreview.id)
+      : undefined;
+    const pathBelongsToFolder =
+      folderPath &&
+      (window.location.pathname === folderPath ||
+        window.location.pathname.startsWith(`${folderPath}/`));
+
+    if (pathBelongsToFolder && previewFolderId !== folder.id) {
+      pushXpPath("/", {});
+    }
+
+    closeFolder(folder.id);
+  };
 
   // On tablet/mobile, always fullscreen
   const style = isSmall
@@ -97,7 +120,7 @@ export function FolderWindow({ folder, zIndex, isActive }: FolderWindowProps) {
         isMaximized={isMaximized}
         onMinimize={!isSmall ? () => minimizeFolder(folder.id) : undefined}
         onMaximize={!isMobile ? () => setIsMaximized(!isMaximized) : undefined}
-        onClose={() => closeFolder(folder.id)}
+        onClose={handleClose}
         onMouseDown={handleDragStart}
       />
 
@@ -151,7 +174,11 @@ export function FolderWindow({ folder, zIndex, isActive }: FolderWindowProps) {
       {/* Content area */}
       <div className="flex-1 flex overflow-hidden bg-white min-h-0">
         <Sidebar />
-        <TileGrid tiles={folder.tiles} folderTitle={folder.title} />
+        <TileGrid
+          tiles={folder.tiles}
+          folderId={folder.id}
+          folderTitle={folder.title}
+        />
       </div>
 
       {/* Status bar */}

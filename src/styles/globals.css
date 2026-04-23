@@ -13,32 +13,53 @@
 
 html, body {
   width: 100%;
-  height: 100%;
-  overflow: hidden;
+  min-height: 100%;
   font-family: var(--font-xp);
+  background: #fff;
+  color: #111;
+  -webkit-text-size-adjust: 100%;
+}
+
+.xp-desktop-shell {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
   font-size: 11px;
   user-select: none;
   cursor: default;
   background: #000;
-  -webkit-text-size-adjust: 100%;
+}
+
+.web-page-shell {
+  min-height: 100vh;
+  overflow-x: hidden;
+  background: #f8fafc;
+  color: #172033;
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  user-select: text;
+  cursor: auto;
 }
 
 /* XP Scrollbars */
-::-webkit-scrollbar { width: 16px; }
-::-webkit-scrollbar-track { background: #ece9d8; border-left: 1px solid #aca899; }
-::-webkit-scrollbar-thumb {
+.xp-desktop-shell ::-webkit-scrollbar { width: 16px; }
+.xp-desktop-shell ::-webkit-scrollbar-track { background: #ece9d8; border-left: 1px solid #aca899; }
+.xp-desktop-shell ::-webkit-scrollbar-thumb {
   background: linear-gradient(90deg, #ece9d8, #d6d2c2 50%, #ece9d8);
   border: 1px solid #aca899; border-radius: 2px;
 }
-::-webkit-scrollbar-button { display: block; height: 16px; background: #ece9d8; border: 1px solid #aca899; }
+.xp-desktop-shell ::-webkit-scrollbar-button { display: block; height: 16px; background: #ece9d8; border: 1px solid #aca899; }
 
 /* Dark scrollbar for preview */
-.dark-scroll::-webkit-scrollbar-track { background: #2a2a2a; border-left: 1px solid #444; }
-.dark-scroll::-webkit-scrollbar-thumb { background: #555; border: 1px solid #666; }
-.dark-scroll::-webkit-scrollbar-button { background: #333; border: 1px solid #555; }
+.xp-desktop-shell .dark-scroll::-webkit-scrollbar-track { background: #2a2a2a; border-left: 1px solid #444; }
+.xp-desktop-shell .dark-scroll::-webkit-scrollbar-thumb { background: #555; border: 1px solid #666; }
+.xp-desktop-shell .dark-scroll::-webkit-scrollbar-button { background: #333; border: 1px solid #555; }
 
 @media (max-width: 767px) {
-  html, body { font-size: 13px; }
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-button { display: none; }
+  .xp-desktop-shell { font-size: 13px; }
+  .xp-desktop-shell ::-webkit-scrollbar { width: 6px; }
+  .xp-desktop-shell ::-webkit-scrollbar-button { display: none; }
 }
