@@ -8,6 +8,8 @@ import { getAdminDesktopData } from "@/modules/admin/data";
 
 export default async function AdminDesktopPage() {
   const { folders, items } = await getAdminDesktopData();
+  type DesktopFolderRow = (typeof folders)[number];
+  type DesktopItemRow = (typeof items)[number];
 
   return (
     <AdminShell
@@ -33,7 +35,7 @@ export default async function AdminDesktopPage() {
             />
           ) : (
             <div className="space-y-3">
-              {folders.map((folder) => (
+              {folders.map((folder: DesktopFolderRow) => (
                 <div
                   key={folder.id}
                   className="rounded border border-[#c9c4b2] bg-white px-4 py-3"
@@ -66,7 +68,7 @@ export default async function AdminDesktopPage() {
             />
           ) : (
             <div className="space-y-3">
-              {items.map((item) => (
+              {items.map((item: DesktopItemRow) => (
                 <div
                   key={item.id}
                   className="rounded border border-[#c9c4b2] bg-white px-4 py-3"
