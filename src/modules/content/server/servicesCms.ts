@@ -10,6 +10,30 @@ function parseJsonData<T>(value: unknown, fallback: T): T {
   return value as T;
 }
 
+export type ServiceIndexCard = {
+  id: string;
+  name: string;
+  desc: string;
+  icon: "folder";
+};
+
+export type ServicesIndexContent = {
+  hero: {
+    eyebrow: string;
+    heading: string;
+    body: string;
+  };
+  cards: ServiceIndexCard[];
+};
+
+export type ServicePageContent = {
+  pageId: string;
+  title: string;
+  subtitle: string;
+  icon: string;
+  items: string[];
+};
+
 async function ensurePageSection(params: {
   pageId: string;
   key: string;
@@ -177,7 +201,7 @@ export async function ensureServicesSeeded() {
   }
 }
 
-export async function getServicesIndexContent() {
+export async function getServicesIndexContent(): Promise<ServicesIndexContent> {
   await ensureServicesSeeded();
 
   const page = await db.sitePage.findUnique({
@@ -225,7 +249,9 @@ export async function getServicesIndexContent() {
   };
 }
 
-export async function getServicePageContent(pageId: string) {
+export async function getServicePageContent(
+  pageId: string,
+): Promise<ServicePageContent | null> {
   await ensureServicesSeeded();
 
   const page = await db.sitePage.findFirst({
