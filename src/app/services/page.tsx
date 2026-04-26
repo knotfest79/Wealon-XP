@@ -6,6 +6,8 @@ import { getServicesIndexContent } from "@/modules/content/server/servicesCms";
 
 const route = getSeoRoute("/services")!;
 
+export const dynamic = "force-dynamic";
+
 export const metadata = buildMetadata(route);
 
 export default async function ServicesPage() {

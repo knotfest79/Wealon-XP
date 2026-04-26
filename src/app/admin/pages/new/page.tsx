@@ -2,6 +2,8 @@ import { AdminShell } from "@/modules/admin/components/AdminShell";
 import { PageCrudEditor } from "@/modules/admin/components/PageCrudEditor";
 import { getAdminPageEditorData } from "@/modules/admin/data";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminNewPagePage() {
   const data = await getAdminPageEditorData();
 

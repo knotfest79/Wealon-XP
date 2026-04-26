@@ -6,6 +6,8 @@ import {
 } from "@/modules/admin/components/AdminShell";
 import { getAdminPagesData } from "@/modules/admin/data";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminPagesPage() {
   const { pages } = await getAdminPagesData();
   type PageRow = (typeof pages)[number];

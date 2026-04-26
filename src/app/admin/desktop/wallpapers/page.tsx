@@ -2,6 +2,8 @@ import { AdminShell } from "@/modules/admin/components/AdminShell";
 import { DesktopWallpaperEditor } from "@/modules/admin/components/DesktopWallpaperEditor";
 import { getDesktopWallpaperData } from "@/modules/desktop/server/wallpaperCms";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminDesktopWallpapersPage() {
   const data = await getDesktopWallpaperData();
 

@@ -6,6 +6,8 @@ import {
 } from "@/modules/admin/components/AdminShell";
 import { getAdminDesktopData } from "@/modules/admin/data";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminDesktopPage() {
   const { folders, items } = await getAdminDesktopData();
   type DesktopFolderRow = (typeof folders)[number];

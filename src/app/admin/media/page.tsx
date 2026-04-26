@@ -5,6 +5,8 @@ import {
 } from "@/modules/admin/components/AdminShell";
 import { getAdminMediaData } from "@/modules/admin/data";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminMediaPage() {
   const { media, counts } = await getAdminMediaData();
   type MediaAssetRow = (typeof media)[number];

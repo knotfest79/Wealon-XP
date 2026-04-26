@@ -5,6 +5,8 @@ import {
 } from "@/modules/admin/components/AdminShell";
 import { getAdminSubmissionsData } from "@/modules/admin/data";
 
+export const dynamic = "force-dynamic";
+
 function formatDate(date: Date) {
   return new Intl.DateTimeFormat("en-AU", {
     day: "2-digit",

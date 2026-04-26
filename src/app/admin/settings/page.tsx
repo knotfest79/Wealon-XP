@@ -5,6 +5,8 @@ import {
 } from "@/modules/admin/components/AdminShell";
 import { getAdminSettingsData } from "@/modules/admin/data";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminSettingsPage() {
   const { settings } = await getAdminSettingsData();
   type SettingRow = (typeof settings)[number];
