@@ -14,6 +14,7 @@ const allowedTypes = new Set([
 ]);
 
 const maxUploadBytes = 10 * 1024 * 1024;
+const isVercel = Boolean(process.env.VERCEL);
 
 function getExtension(file: File) {
   const originalExtension = path.extname(file.name).toLowerCase();
@@ -44,21 +45,34 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Image must be 10MB or smaller" }, { status: 400 });
     }
 
+    const extension = getExtension(file);
+    const filename = `${Date.now()}-${randomUUID()}${extension}`;
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const name = path.basename(file.name, path.extname(file.name));
+
+    if (isVercel) {
+      return NextResponse.json({
+        ok: true,
+        file: {
+          url: `data:${file.type};base64,${buffer.toString("base64")}`,
+          name,
+          mimeType: file.type,
+          sizeBytes: file.size,
+        },
+      });
+    }
+
     const uploadDir = path.join(process.cwd(), "public", "uploads", "media");
     await mkdir(uploadDir, { recursive: true });
 
-    const extension = getExtension(file);
-    const filename = `${Date.now()}-${randomUUID()}${extension}`;
     const filepath = path.join(uploadDir, filename);
-    const buffer = Buffer.from(await file.arrayBuffer());
-
     await writeFile(filepath, buffer);
 
     return NextResponse.json({
       ok: true,
       file: {
         url: `/uploads/media/${filename}`,
-        name: path.basename(file.name, path.extname(file.name)),
+        name,
         mimeType: file.type,
         sizeBytes: file.size,
       },
