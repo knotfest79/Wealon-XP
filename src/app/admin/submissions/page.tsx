@@ -15,6 +15,8 @@ function formatDate(date: Date) {
 
 export default async function AdminSubmissionsPage() {
   const { bookings, contacts } = await getAdminSubmissionsData();
+  type BookingRow = (typeof bookings)[number];
+  type ContactRow = (typeof contacts)[number];
 
   return (
     <AdminShell
@@ -31,7 +33,7 @@ export default async function AdminSubmissionsPage() {
             />
           ) : (
             <div className="space-y-3">
-              {bookings.map((booking) => (
+              {bookings.map((booking: BookingRow) => (
                 <div
                   key={booking.id}
                   className="rounded border border-[#c9c4b2] bg-white px-4 py-3"
@@ -68,7 +70,7 @@ export default async function AdminSubmissionsPage() {
             />
           ) : (
             <div className="space-y-3">
-              {contacts.map((contact) => (
+              {contacts.map((contact: ContactRow) => (
                 <div
                   key={contact.id}
                   className="rounded border border-[#c9c4b2] bg-white px-4 py-3"

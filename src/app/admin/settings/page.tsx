@@ -7,6 +7,7 @@ import { getAdminSettingsData } from "@/modules/admin/data";
 
 export default async function AdminSettingsPage() {
   const { settings } = await getAdminSettingsData();
+  type SettingRow = (typeof settings)[number];
 
   return (
     <AdminShell
@@ -22,7 +23,7 @@ export default async function AdminSettingsPage() {
           />
         ) : (
           <div className="space-y-3">
-            {settings.map((setting) => (
+            {settings.map((setting: SettingRow) => (
               <div
                 key={setting.id}
                 className="rounded border border-[#c9c4b2] bg-white px-4 py-3"

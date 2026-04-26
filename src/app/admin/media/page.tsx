@@ -7,6 +7,8 @@ import { getAdminMediaData } from "@/modules/admin/data";
 
 export default async function AdminMediaPage() {
   const { media, counts } = await getAdminMediaData();
+  type MediaAssetRow = (typeof media)[number];
+  type MediaCountRow = (typeof counts)[number];
 
   return (
     <AdminShell
@@ -23,7 +25,7 @@ export default async function AdminMediaPage() {
             />
           ) : (
             <div className="space-y-2">
-              {counts.map((entry) => (
+              {counts.map((entry: MediaCountRow) => (
                 <div
                   key={entry.kind}
                   className="flex items-center justify-between rounded border border-[#c9c4b2] bg-white px-3 py-2 text-sm"
@@ -54,7 +56,7 @@ export default async function AdminMediaPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {media.map((asset) => (
+                  {media.map((asset: MediaAssetRow) => (
                     <tr key={asset.id} className="bg-white even:bg-[#f8f5ea]">
                       <td className="border-b border-[#d8d2c2] px-3 py-2 font-medium">
                         {asset.name}

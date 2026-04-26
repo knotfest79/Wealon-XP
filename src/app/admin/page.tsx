@@ -16,6 +16,9 @@ function formatDate(date: Date) {
 
 export default async function AdminPage() {
   const data = await getAdminOverviewData();
+  type RecentPageRow = (typeof data.recentPages)[number];
+  type RecentDesktopItemRow = (typeof data.recentDesktopItems)[number];
+  type RecentMediaRow = (typeof data.recentMedia)[number];
 
   return (
     <AdminShell
@@ -55,7 +58,7 @@ export default async function AdminPage() {
             />
           ) : (
             <div className="space-y-3">
-              {data.recentPages.map((page) => (
+              {data.recentPages.map((page: RecentPageRow) => (
                 <div
                   key={page.id}
                   className="rounded border border-[#c9c4b2] bg-white px-4 py-3"
@@ -92,7 +95,7 @@ export default async function AdminPage() {
             />
           ) : (
             <div className="space-y-3">
-              {data.recentDesktopItems.map((item) => (
+              {data.recentDesktopItems.map((item: RecentDesktopItemRow) => (
                 <div
                   key={item.id}
                   className="rounded border border-[#c9c4b2] bg-white px-4 py-3"
@@ -127,7 +130,7 @@ export default async function AdminPage() {
             />
           ) : (
             <div className="space-y-3">
-              {data.recentMedia.map((asset) => (
+              {data.recentMedia.map((asset: RecentMediaRow) => (
                 <div
                   key={asset.id}
                   className="rounded border border-[#c9c4b2] bg-white px-4 py-3"

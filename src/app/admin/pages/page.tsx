@@ -8,6 +8,7 @@ import { getAdminPagesData } from "@/modules/admin/data";
 
 export default async function AdminPagesPage() {
   const { pages } = await getAdminPagesData();
+  type PageRow = (typeof pages)[number];
 
   return (
     <AdminShell
@@ -54,7 +55,7 @@ export default async function AdminPagesPage() {
                 </tr>
               </thead>
               <tbody>
-                {pages.map((page) => (
+                {pages.map((page: PageRow) => (
                   <tr key={page.id} className="bg-white even:bg-[#f8f5ea]">
                     <td className="border-b border-[#d8d2c2] px-3 py-2 font-medium">
                       <div className="flex items-center justify-between gap-3">
