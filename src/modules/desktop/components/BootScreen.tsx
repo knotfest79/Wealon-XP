@@ -43,7 +43,7 @@ export function BootScreen() {
             className="text-white mt-3 text-[22px] tracking-[6px]"
             style={{ fontFamily: "'Franklin Gothic Medium', sans-serif" }}
           >
-            Microsoft
+            Wealon Tax & Accounting
           </div>
           <div className="text-gray-500 text-[10px] tracking-wider mt-4">
             Windows XP Professional

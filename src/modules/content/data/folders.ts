@@ -1,4 +1,5 @@
 import { Folder } from "@/lib/types";
+import { serviceTiles } from "@/modules/content/data/serviceDefaults";
 
 export const folders: Record<string, Folder> = {
   about: {
@@ -48,56 +49,7 @@ export const folders: Record<string, Folder> = {
     id: "services",
     title: "Services",
     address: "C:\\Wealon tax & accounting\\Services",
-    tiles: [
-      {
-        id: "tax",
-        name: "Tax Preparation",
-        desc: "Individual & business returns",
-        icon: "folder",
-      },
-      {
-        id: "bookkeeping",
-        name: "Bookkeeping & BAS",
-        desc: "Cloud-based, Xero/MYOB",
-        icon: "folder",
-      },
-      {
-        id: "advisory",
-        name: "Business Advisory",
-        desc: "Growth & strategy consulting",
-        icon: "folder",
-      },
-      {
-        id: "audit",
-        name: "Audit & Assurance",
-        desc: "Statutory & SMSF audits",
-        icon: "folder",
-      },
-      {
-        id: "smsf",
-        name: "SMSF Administration",
-        desc: "Setup, compliance, returns",
-        icon: "folder",
-      },
-      {
-        id: "structure",
-        name: "Company Structuring",
-        desc: "Trusts, companies, succession",
-        icon: "folder",
-      },
-      {
-        id: "intltax",
-        name: "International Tax",
-        desc: "Cross-border, expat tax",
-        icon: "folder",
-      },
-      {
-        id: "cloud",
-        name: "Cloud Accounting",
-        desc: "Xero, MYOB migration",
-        icon: "folder",
-      },
-    ],
+    tiles: serviceTiles,
   },
   downloads: {
     id: "downloads",

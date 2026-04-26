@@ -1,4 +1,5 @@
 "use client";
+import { useEffect, useState } from "react";
 import { Tile } from "@/lib/types";
 import { TileIcon } from "@/modules/ui/Icons";
 import {
@@ -17,6 +18,40 @@ interface TileGridProps {
 export function TileGrid({ tiles, folderId, folderTitle }: TileGridProps) {
   const openFolder = useWindowStore((s) => s.openFolder);
   const openPreview = useWindowStore((s) => s.openPreview);
+  const [runtimeTiles, setRuntimeTiles] = useState<Tile[]>(tiles);
+
+  useEffect(() => {
+    setRuntimeTiles(tiles);
+  }, [tiles]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadServiceTiles() {
+      if (folderId !== "services") return;
+
+      try {
+        const response = await fetch("/api/cms/services/tiles", {
+          cache: "no-store",
+        });
+
+        if (!response.ok) return;
+
+        const payload = (await response.json()) as { tiles: Tile[] };
+        if (!cancelled && payload.tiles.length > 0) {
+          setRuntimeTiles(payload.tiles);
+        }
+      } catch {
+        // Keep static tiles as fallback.
+      }
+    }
+
+    loadServiceTiles();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [folderId]);
 
   const handleClick = (tile: Tile) => {
     const routePath = tile.openFolder
@@ -37,10 +72,10 @@ export function TileGrid({ tiles, folderId, folderTitle }: TileGridProps) {
   return (
     <div className="flex-1 overflow-y-auto p-4 max-lg:p-4 min-h-0">
       <div className="text-xs font-bold text-[#333] mb-2.5 border-b border-[#e0dcd0] pb-1 max-lg:text-[13px]">
-        📁 {folderTitle} — {tiles.length} items
+        📁 {folderTitle} — {runtimeTiles.length} items
       </div>
       <div className="grid grid-cols-2 max-lg:grid-cols-1 gap-5 max-lg:gap-6">
-        {tiles.map((tile) => (
+        {runtimeTiles.map((tile) => (
           <div
             key={tile.id}
             onClick={() => handleClick(tile)}

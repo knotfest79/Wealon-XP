@@ -6,14 +6,6 @@ import {
   TestimonialsPage,
   ContactPage,
   WhyUsPage,
-  TaxPage,
-  BookkeepingPage,
-  AdvisoryPage,
-  AuditPage,
-  SmsfPage,
-  StructurePage,
-  IntlTaxPage,
-  CloudPage,
   DownloadPreview,
 } from "./Pages";
 import {
@@ -21,6 +13,7 @@ import {
   PageRenderVariant,
 } from "./PageRenderContext";
 import { BookingForm } from "@/modules/booking/components/BookingForm";
+import { CmsServicePage } from "./CmsServicePage";
 
 const pageMap: Record<string, React.FC> = {
   overview: OverviewPage,
@@ -29,16 +22,19 @@ const pageMap: Record<string, React.FC> = {
   testimonials: TestimonialsPage,
   contact: ContactPage,
   whyus: WhyUsPage,
-  tax: TaxPage,
-  bookkeeping: BookkeepingPage,
-  advisory: AdvisoryPage,
-  audit: AuditPage,
-  smsf: SmsfPage,
-  structure: StructurePage,
-  intltax: IntlTaxPage,
-  cloud: CloudPage,
   bookform: BookingForm,
 };
+
+const cmsServicePageIds = new Set([
+  "tax",
+  "bookkeeping",
+  "advisory",
+  "audit",
+  "smsf",
+  "structure",
+  "intltax",
+  "cloud",
+]);
 
 const downloadInfo: Record<string, { title: string; desc: string }> = {
   "dl-checklist": {
@@ -106,6 +102,14 @@ export function PageRouter({
   pageId: string;
   variant?: PageRenderVariant;
 }) {
+  if (cmsServicePageIds.has(pageId)) {
+    return (
+      <PageRenderProvider variant={variant}>
+        <CmsServicePage pageId={pageId} />
+      </PageRenderProvider>
+    );
+  }
+
   const Comp = pageMap[pageId];
   if (Comp) {
     return (

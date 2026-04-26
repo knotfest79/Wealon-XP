@@ -1,0 +1,216 @@
+generator client {
+  provider   = "prisma-client-js"
+  engineType = "binary"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum MediaKind {
+  ICON
+  IMAGE
+  THUMBNAIL
+  HERO
+  FILE
+}
+
+enum PageType {
+  CONTENT
+  SERVICE
+  CONTACT
+  BOOKING
+  DOWNLOAD
+  CUSTOM
+}
+
+enum SectionType {
+  HERO
+  RICH_TEXT
+  IMAGE
+  GALLERY
+  STATS
+  TEAM
+  TESTIMONIALS
+  TIMELINE
+  SERVICE_LIST
+  CTA
+  CUSTOM
+}
+
+enum DesktopItemType {
+  PAGE
+  FOLDER
+  DOWNLOAD
+  FORM
+  LINK
+}
+
+model Booking {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  message   String?
+  status    String   @default("new")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model Contact {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  message   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String?
+  email     String   @unique
+  password  String
+  role      String   @default("admin")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model MediaAsset {
+  id        String    @id @default(cuid())
+  name      String
+  url       String
+  kind      MediaKind
+  altText   String?
+  mimeType  String?
+  width     Int?
+  height    Int?
+  sizeBytes Int?
+  folder    String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now()) @updatedAt
+
+  pageIcons             SitePage[]      @relation("PageIcon")
+  pageHeroImages        SitePage[]      @relation("PageHeroImage")
+  sectionImages         PageSection[]   @relation("SectionImage")
+  folderIcons           DesktopFolder[] @relation("FolderIcon")
+  desktopItemIcons      DesktopItem[]   @relation("DesktopItemIcon")
+  desktopItemThumbnails DesktopItem[]   @relation("DesktopItemThumbnail")
+  desktopWallpapers     DesktopWallpaper[]
+}
+
+model SitePage {
+  id          String        @id @default(cuid())
+  title       String
+  slug        String        @unique
+  parentId    String?
+  parent      SitePage?     @relation("PageTree", fields: [parentId], references: [id], onDelete: SetNull)
+  children    SitePage[]    @relation("PageTree")
+  pageType    PageType      @default(CONTENT)
+  isPublished Boolean       @default(true)
+  sortOrder   Int           @default(0)
+  seoTitle    String?
+  seoDesc     String?
+  iconId      String?
+  icon        MediaAsset?   @relation("PageIcon", fields: [iconId], references: [id], onDelete: SetNull)
+  heroImageId String?
+  heroImage   MediaAsset?   @relation("PageHeroImage", fields: [heroImageId], references: [id], onDelete: SetNull)
+  sections    PageSection[]
+  desktopItems DesktopItem[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @default(now()) @updatedAt
+
+  @@index([parentId])
+  @@index([slug])
+}
+
+model PageSection {
+  id         String       @id @default(cuid())
+  pageId     String
+  page       SitePage     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  key        String
+  type       SectionType
+  heading    String?
+  subheading String?
+  body       String?
+  imageId    String?
+  image      MediaAsset?  @relation("SectionImage", fields: [imageId], references: [id], onDelete: SetNull)
+  sortOrder  Int          @default(0)
+  isVisible  Boolean      @default(true)
+  jsonData   Json?
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @default(now()) @updatedAt
+
+  @@unique([pageId, key])
+  @@index([pageId, sortOrder])
+}
+
+model DesktopFolder {
+  id        String          @id @default(cuid())
+  name      String
+  slug      String          @unique
+  parentId  String?
+  parent    DesktopFolder?  @relation("FolderTree", fields: [parentId], references: [id], onDelete: SetNull)
+  children  DesktopFolder[] @relation("FolderTree")
+  iconId    String?
+  icon      MediaAsset?     @relation("FolderIcon", fields: [iconId], references: [id], onDelete: SetNull)
+  sortOrder Int             @default(0)
+  isVisible Boolean         @default(true)
+  items     DesktopItem[]
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @default(now()) @updatedAt
+
+  @@index([parentId, sortOrder])
+}
+
+model DesktopItem {
+  id           String          @id @default(cuid())
+  folderId     String?
+  folder       DesktopFolder?  @relation(fields: [folderId], references: [id], onDelete: Cascade)
+  name         String
+  itemType     DesktopItemType
+  targetPageId String?
+  targetPage   SitePage?       @relation(fields: [targetPageId], references: [id], onDelete: SetNull)
+  targetUrl    String?
+  iconId       String?
+  icon         MediaAsset?     @relation("DesktopItemIcon", fields: [iconId], references: [id], onDelete: SetNull)
+  thumbnailId  String?
+  thumbnail    MediaAsset?     @relation("DesktopItemThumbnail", fields: [thumbnailId], references: [id], onDelete: SetNull)
+  description  String?
+  sortOrder    Int             @default(0)
+  isVisible    Boolean         @default(true)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @default(now()) @updatedAt
+
+  @@index([folderId, sortOrder])
+  @@index([targetPageId])
+}
+
+model SiteSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     Json
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model DesktopWallpaper {
+  id           String     @id @default(cuid())
+  name         String
+  mediaAssetId String
+  mediaAsset   MediaAsset @relation(fields: [mediaAssetId], references: [id], onDelete: Cascade)
+  sortOrder    Int        @default(0)
+  isActive     Boolean    @default(true)
+  isDefault    Boolean    @default(false)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @default(now()) @updatedAt
+
+  @@index([sortOrder])
+  @@index([isActive, sortOrder])
+}
+
+model DesktopSetting {
+  id              String   @id @default(cuid())
+  rotationEnabled Boolean  @default(true)
+  rotationSeconds Int      @default(30)
+  updatedAt       DateTime @default(now()) @updatedAt
+}

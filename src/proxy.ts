@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { verifyToken } from "./lib/auth";
 
 const xpDeepLinkPaths = new Set([
   "/about",
@@ -28,6 +29,16 @@ export function proxy(request: NextRequest) {
     url.pathname = "/";
     return NextResponse.rewrite(url);
   }
+  const token = request.cookies.get("token")?.value;
+  if (pathname.startsWith("/admin") || pathname.startsWith("/api/admin")) {
+    if (!token || !verifyToken(token)) {
+      if (pathname.startsWith("/api/admin")) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+
+      return NextResponse.redirect(new URL("/sign-in", request.url));
+    }
+  }
 
   return NextResponse.next();
 }
@@ -40,5 +51,7 @@ export const config = {
     "/services/:path*",
     "/contact",
     "/book",
+    "/admin/:path*",
+    "/api/admin/:path*",
   ],
 };

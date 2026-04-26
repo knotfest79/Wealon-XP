@@ -1,9 +1,6 @@
-import { WallpaperConfig } from '@/lib/types';
+import { WallpaperConfig } from "@/lib/types";
+import { defaultWallpapers } from "./wallpaperDefaults";
 
-export const wallpapers: WallpaperConfig[] = [
-  { id: 'bliss', src: '/wallpapers/bliss.jpg', alt: 'Bliss - Classic green hills' },
-  { id: 'autumn', src: '/wallpapers/autumn.jpg', alt: 'Autumn path' },
-  { id: 'fish', src: '/wallpapers/fish.jpg', alt: 'Tropical fish' },
-  { id: 'bliss4k', src: '/wallpapers/bliss4k.webp', alt: 'Bliss 4K remaster' },
-  { id: 'sunset', src: '/wallpapers/sunset.png', alt: 'Sunset hills' },
-];
+export const wallpapers: WallpaperConfig[] = defaultWallpapers.map(
+  ({ id, src, alt }) => ({ id, src, alt }),
+);
