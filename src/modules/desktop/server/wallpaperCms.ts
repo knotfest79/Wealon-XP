@@ -14,6 +14,10 @@ export type WallpaperRecord = {
   mediaAssetId: string;
 };
 
+function canServeWallpaperUrl(url: string) {
+  return !process.env.VERCEL || !url.startsWith("/uploads/media/");
+}
+
 export async function ensureDesktopWallpaperSettings() {
   const existingSettings = await db.desktopSetting.count();
 
@@ -43,16 +47,18 @@ export async function getDesktopWallpaperData() {
   ]);
 
   return {
-    wallpapers: wallpapers.map((wallpaper) => ({
-      id: wallpaper.id,
-      name: wallpaper.name,
-      src: wallpaper.mediaAsset.url,
-      alt: wallpaper.mediaAsset.altText ?? wallpaper.name,
-      isActive: wallpaper.isActive,
-      isDefault: wallpaper.isDefault,
-      sortOrder: wallpaper.sortOrder,
-      mediaAssetId: wallpaper.mediaAssetId,
-    })),
+    wallpapers: wallpapers
+      .filter((wallpaper) => canServeWallpaperUrl(wallpaper.mediaAsset.url))
+      .map((wallpaper) => ({
+        id: wallpaper.id,
+        name: wallpaper.name,
+        src: wallpaper.mediaAsset.url,
+        alt: wallpaper.mediaAsset.altText ?? wallpaper.name,
+        isActive: wallpaper.isActive,
+        isDefault: wallpaper.isDefault,
+        sortOrder: wallpaper.sortOrder,
+        mediaAssetId: wallpaper.mediaAssetId,
+      })),
     settings: settings ?? {
       rotationEnabled: true,
       rotationSeconds: 30,
